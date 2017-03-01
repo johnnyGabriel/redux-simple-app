@@ -1,33 +1,35 @@
 import { createStore } from 'redux'
+import { Counter } from './reducers'
 
-const el = document.getElementById('counter')
+// Store
+const store = createStore( Counter, { count: 0 } )
 
-const Counter = ( state = { count: 0 }, action ) => {
+// Elements
+const elCounter = document.getElementById('counter')
+const btnInc = document.getElementById('inc')
+const btnDec = document.getElementById('dec')
 
-    switch( action.type ) {
-
-        case 'ADD':
-            return { ...state, count: state.count + 1 }
-
-        case 'REM':
-            return { ...state, count: state.count - 1 }
-
-        default:
-            return state
-
-    }
-
+btnInc.onclick = () => {
+    store.dispatch({ type: 'INC' })
 }
 
-const store = createStore( Counter )
+btnDec.onclick = () => {
+    store.dispatch({ type: 'DEC' })
+}
 
-store.subscribe( () => {
+const render = ( el, store ) => {
 
-    console.log(store.getState())
-    el.innerText = store.getState().count
+    let _render = ( state ) => {
+        console.log( state )
+        el.innerText = state.count
+    }
 
-})
+    _render( store.getState() )
 
-setTimeout(() => {
-    store.dispatch( { type: 'ADD' } )
-}, 2000)
+    return store.subscribe( () => {
+        _render( store.getState() )
+    })
+    
+}
+
+render( elCounter, store )
